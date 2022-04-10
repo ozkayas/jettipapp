@@ -3,13 +3,20 @@ package com.ozkayas.jetpactipapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.ozkayas.jetpactipapp.ui.theme.JetpactipappTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,27 +24,53 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             JetpactipappTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+                MyApp()
             }
         }
     }
 }
-
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    JetpactipappTheme {
-        Greeting("Android")
+fun MyApp(){
+    // A surface container using the 'background' color from the theme
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
+        Text("MyApp")
     }
 }
+
+@Preview
+@Composable
+fun TopHeader(totalPerPerson: Double = 1.0) {
+    Surface(modifier = Modifier
+        .fillMaxWidth()
+        .height(150.dp)
+        .clip(shape = RoundedCornerShape(15.dp)),
+    color = Color(0xFF58BEEC)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            val amount = "%.2f".format(totalPerPerson)
+            Text(text = "Total per person:", style = MaterialTheme.typography.h4)
+            Text(text = "$ $amount", style = MaterialTheme.typography.h3, fontWeight = FontWeight.Bold)
+
+        }
+    }
+}
+
+//@Composable
+//fun Greeting(name: String) {
+//    Text(text = "Hello $name!")
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    JetpactipappTheme {
+//        Greeting("Android")
+//    }
+//}

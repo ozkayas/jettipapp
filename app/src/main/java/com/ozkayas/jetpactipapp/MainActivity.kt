@@ -3,6 +3,7 @@ package com.ozkayas.jetpactipapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -40,7 +41,7 @@ fun MyApp(){
     }
 }
 
-@Preview
+//@Preview
 @Composable
 fun TopHeader(totalPerPerson: Double = 1.0) {
     Surface(modifier = Modifier
@@ -62,15 +63,20 @@ fun TopHeader(totalPerPerson: Double = 1.0) {
     }
 }
 
-//@Composable
-//fun Greeting(name: String) {
-//    Text(text = "Hello $name!")
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    JetpactipappTheme {
-//        Greeting("Android")
-//    }
-//}
+@Preview
+@Composable
+fun MainContent() {
+    Surface(modifier = Modifier
+        .padding(2.dp)
+        .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(width = 1.5.dp, color = Color.LightGray)
+    ) {
+        Column() {
+            Text(text = "Hello")
+            Text(text = "Hello")
+            Text(text = "Hello")
+            Text(text = "Hello")
+        }
+    }
+}

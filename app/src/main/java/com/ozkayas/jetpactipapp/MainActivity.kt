@@ -10,15 +10,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -34,11 +32,17 @@ import com.ozkayas.jetpactipapp.ui.theme.JetpactipappTheme
 import com.ozkayas.jetpactipapp.widgets.RoundIconButton
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             JetpactipappTheme {
-                MyApp()
+
+                Column() {
+                    TopHeader()
+                    BillForm()
+                }
+
             }
         }
     }
@@ -58,6 +62,7 @@ fun MyApp(){
 @Composable
 fun TopHeader(totalPerPerson: Double = 1.0) {
     Surface(modifier = Modifier
+        .padding(all = 20.dp)
         .fillMaxWidth()
         .height(150.dp)
         .clip(shape = RoundedCornerShape(15.dp)),
@@ -101,24 +106,36 @@ fun BillForm(modifier: Modifier = Modifier,
         totalBillState.value.trim().isNotEmpty()
     }
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    var personCount by remember { mutableStateOf(2)}
+    var personCountRange = IntRange(1,10)
+    fun decrement(){if(personCount>personCountRange.first){personCount--}}
+    fun increment(){
+       if (personCount<personCountRange.last) { personCount++ }}
+    var sliderPositionState: Float by remember{ mutableStateOf(0f)}
+    val tipPercentage = (sliderPositionState*100).toInt()
+    var tipAmount: Double by remember { mutableStateOf(0.0)}
 
     Surface(modifier = Modifier
-        .padding(2.dp)
+        .padding(20.dp)
         .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(width = 1.5.dp, color = Color.LightGray)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            InputField(valueState = totalBillState, labelId ="Enter Bill", enabled = true, isSingleLine = true,
+            InputField(
+                valueState = totalBillState,
+                labelId ="Enter Bill",
+                enabled = true,
+                isSingleLine = true,
                 onAction = KeyboardActions{
                     if (!validState) return@KeyboardActions
                     onValChange(totalBillState.value.trim())
                     keyboardController?.hide()
                 }
             )
-            if (validState){
-                Row(modifier = Modifier.padding(3.dp), horizontalArrangement = Arrangement.Start) {
+//            if (validState){
+            if (true){
+                Row(modifier = Modifier.padding(all = 12.dp), horizontalArrangement = Arrangement.Start) {
                     Text(
                         text = "Split",
                         modifier = Modifier.align(
@@ -126,10 +143,15 @@ fun BillForm(modifier: Modifier = Modifier,
                         )
                     )
                     Spacer(modifier = Modifier.width(120.dp))
-                    Row(modifier = Modifier.padding(horizontal = 3.dp),
+                    Row(modifier = Modifier.padding(all = 12.dp),
                         horizontalArrangement = Arrangement.End) {
-                        RoundIconButton(imageVector = Icons.Default.Remove, onClick = { /*TODO*/ })
-                        RoundIconButton(imageVector = Icons.Default.Add, onClick = { /*TODO*/ })
+                        RoundIconButton(imageVector = Icons.Default.Remove, onClick = { decrement() })
+                        Text(text = "$personCount",
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 9.dp, end = 9.dp)
+                        )
+                        RoundIconButton(imageVector = Icons.Default.Add, onClick = { increment() })
                     }
                 }
             }
@@ -137,6 +159,31 @@ fun BillForm(modifier: Modifier = Modifier,
                 Box() {
                     
                 }
+            }
+
+
+            Row(modifier = Modifier.padding(all = 12.dp)) {
+                Text(text = "Tip", modifier = Modifier.align(alignment = Alignment.CenterVertically))
+                Spacer(modifier = Modifier.width(200.dp))
+                Text(text = "$tipAmount",modifier = Modifier.align(alignment = Alignment.CenterVertically))
+            }
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "$tipPercentage %")
+                Spacer(modifier = Modifier.height(20.dp))
+                Slider(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    valueRange = 0f..1f,
+                    value = sliderPositionState,
+                    onValueChange = {  sliderPositionState = it
+                        if (totalBillState.value.isNotEmpty()) {
+                            tipAmount = (totalBillState.value.toDouble() * sliderPositionState)
+                            tipAmount = "%.2f".format(tipAmount).toDouble()
+                        }
+                        Log.d("TAG", "$sliderPositionState ")
+                })
             }
 
         }
